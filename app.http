@@ -1,0 +1,12 @@
+@token=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyeHh4Iiwicm9sIjoiY29vcmRpbmFkb3I6Y2FydGFnZW5hIiwiYWxsb3ciOlt7InJlc291cmNlIjoidXNlciIsInBlcm1pc3Npb25zIjpbeyJwZXJtaXNzaW9uIjoidXNlcjptZW1vcmFuZHVtOnJlYWQiLCJmaWx0ZXIiOnsiaWQiOiJ1c2VyeHh4In19LHsicGVybWlzc2lvbiI6InVzZXI6bWVtb3JhbmR1bTp3cml0ZSIsImZpbHRlciI6eyJzZWRlIjoiQSIsImNlbnRlciI6IkQifX1dfSx7InJlc291cmNlIjoiKiIsInBlcm1pc3Npb25zIjpbInVzZXI6Y3JlYXRlIiwidXNlcjplZGl0IiwidXNlcjpzZWFyY2hCeU5hbWUiXX1dLCJpYXQiOjE1NjQxNTY3MDh9.9U9W2cac-sPbKAM9XMukvStvmWUfAYBTCeHyvhwHpzU
+
+###
+
+GET http://localhost:3000/private/1 HTTP/1.1
+Authorization: {{token}}
+
+
+###
+
+GET http://localhost:3000/private/2/userxxx HTTP/1.1
+Authorization: {{token}}

@@ -1,0 +1,21 @@
+version: '3'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    environment:
+    - DB_URI=mongodb://db:27017/test
+    - SECRET=secret
+    #depends_on:
+    #  - db
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: nodemon app.js --ignore __tests__/*.js
+  #db:
+  #  image: mongo
+  #  ports:
+  #  - "27017:27017"

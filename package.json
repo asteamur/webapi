@@ -1,0 +1,16 @@
+{
+  "name": "webapi",
+  "version": "1.0.0",
+  "description": "asteamur api",
+  "main": "index.js",
+  "author": "miguel alarcos",
+  "license": "MIT",
+  "devDependencies": {
+    "axios": "^0.19.0"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-jwt": "^5.3.1",
+    "jsonwebtoken": "^8.5.1"
+  }
+}
