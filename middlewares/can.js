@@ -1,5 +1,6 @@
 const pick = require('object.pick')
-const { find } = require('./db')
+const db = require('../db')
+const { ObjectID } = require('mongodb')
 
 function equal(a, b){
     for(let key of Object.keys(a)){
@@ -31,8 +32,8 @@ function can({action, target=null}){
     }else{
         return async function(req, res, next){
             try{
-                const r = find(target, req.params.id)
-                //await sleep(1000)
+                const _id = new ObjectID(req.params.id)
+                const r = await db.get().collection('users').findOne({_id})
                 if(isAllowedToResource(req.token, target, r, action)){
                     next()
                 }else{
