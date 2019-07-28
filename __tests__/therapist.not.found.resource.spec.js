@@ -39,7 +39,7 @@ describe('test resource therapist not found', () => {
     expect.assertions(1)
     try{
         const response = await axios.get(
-        'http://localhost:3000/private/2/userxxx',
+        'http://localhost:3000/api/private/testing/2/userxxx',
         {
             headers: {
             Authorization: "Bearer " + token

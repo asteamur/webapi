@@ -39,7 +39,7 @@ describe('test demo', () => {
   test('patch form datasheet', async () => {
     expect.assertions(1)
     const response = await axios.get(
-      'http://localhost:3000/private/1',
+      'http://localhost:3000/api/private/testing/1',
       {
         headers: {
           Authorization: "Bearer " + token

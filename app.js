@@ -1,27 +1,15 @@
-const { can } = require('./lib')
 const express = require('express')
 const jwt = require('express-jwt')
+const testRoutes = require('./routes/testing/testPermissions')
+const errorCan = require('./middlewares/errorCan')
 
 const app = express()
 
-app.use('/private', jwt({secret: 'secret', requestProperty: 'token'}))
+app.use('/api/private', jwt({secret: 'secret', requestProperty: 'token'}))
 
-app.get('/private/1', can({action: 'user:create'}), function (req, res) {
-    res.send('Hello World!');
-});
+app.use('/api/private/testing', testRoutes)
 
-app.get('/private/2/:id', can({target: 'user', action: 'user:memorandum:read'}), function (req, res) {
-    res.send('ok!');
-});
-
-app.use(function(err, req, res, next) {
-    //console.log(JSON.stringify(err))
-    if(err.code === 'not-allowed'){
-        res.status(401).json({error: err.description})
-    }else{
-        next(err)
-    }
-})
+app.use(errorCan)
 
 app.listen(3000, function () {
     console.log('Example app listening on port 3000!');

@@ -38,7 +38,7 @@ describe('test resource therapist', () => {
   test('allow', async () => {
     expect.assertions(1)
     const response = await axios.get(
-      'http://localhost:3000/private/2/userxxx',
+      'http://localhost:3000/api/private/testing/2/userxxx',
       {
         headers: {
           Authorization: "Bearer " + token
