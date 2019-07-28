@@ -49,6 +49,7 @@ describe('test resource 1', () => {
     db = client.db(dbName)
     await db.collection('users').insertOne({
       _id,
+      id: 'userxxx',
       parent: 'parentxxx',
       therapists: ['thaaa', 'thbbb', 'thzzz'],
       sede: 'A',

@@ -1,5 +1,5 @@
 const {Router} = require('express')
-const can = require('../../middlewares/can')
+const { can } = require('../../middlewares/can')
 
 const router = Router()
 

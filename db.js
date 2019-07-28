@@ -9,7 +9,7 @@ exports.connect = function(url, opts, done) {
 
   MongoClient.connect(url, opts, function(err, client) {
     if (err) return done(err)
-    state.db = client.db('test')
+    state.db = client.db(process.env.DB_NAME)
     done()
   })
 }

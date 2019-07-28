@@ -2,6 +2,14 @@ const axios = require('axios');
 axios.defaults.adapter = require('axios/lib/adapters/http');
 const jwt = require('jsonwebtoken')
 
+const { MongoClient, ObjectID } = require('mongodb');
+
+const url = 'mongodb://db:27017/test';
+const dbName = 'test';
+
+let db = null;
+const client = new MongoClient(url);
+
 let token = {
     userId: 'userxxx',
     rol: 'coordinador:cartagena',
@@ -12,7 +20,7 @@ let token = {
                 {
                     permission: 'user:memorandum:read',
                     filter: {
-                        therapists: 'userxxx'
+                        therapists: 'thxxx'
                     }
                 },
                 {
@@ -35,10 +43,30 @@ token = jwt.sign(token, 'secret')
 
 describe('test resource therapist', () => {
 
+  let _id = new ObjectID()
+
+  beforeAll(async () => {
+    await client.connect()
+    db = client.db(dbName)
+    await db.collection('users').insertOne({
+      _id,
+      id: 'userxxx',
+      parent: 'parentxxx',
+      therapists: ['thaaa', 'thbbb', 'thxxx'],
+      sede: 'A',
+      center: 'C'
+    })
+  })
+
+  afterAll(async () => {
+    await db.collection('users').deleteMany({ })    
+    await client.close()
+  })
+
   test('allow', async () => {
     expect.assertions(1)
     const response = await axios.get(
-      'http://localhost:3000/api/private/testing/2/userxxx',
+      'http://localhost:3000/api/private/testing/2/' + _id,
       {
         headers: {
           Authorization: "Bearer " + token
