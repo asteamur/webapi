@@ -1,7 +1,7 @@
 const db = require('../db')
 const { ObjectID } = require('mongodb')
 
-function equal(a, b){
+function includes(a, b){
     for(let key of Object.keys(b)){
         if(Array.isArray(a[key])){
             if(!a[key].includes(b[key])){
@@ -67,8 +67,7 @@ function isAllowedToResource(token, resourceName, resource, permission) {
                     if(p.filter === undefined){
                         return true
                     }
-                    if(equal(resource, p.filter)){
-                    //if (equal(pick(resource, Object.keys(p.filter)), p.filter)){
+                    if(includes(resource, p.filter)){
                         return true
                     }
                 }
@@ -78,4 +77,4 @@ function isAllowedToResource(token, resourceName, resource, permission) {
     return false
 }
 
-module.exports = { can, equal, isAllowed, isAllowedToResource }
+module.exports = { can, includes, isAllowed, isAllowedToResource }
