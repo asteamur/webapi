@@ -59,7 +59,7 @@ describe('test resource therapist not found', () => {
     })
   
     afterAll(async () => {
-      await db.collection('users').deleteMany({ })    
+      await db.collection('users').deleteOne({ _id })    
       await client.close()
     })
 

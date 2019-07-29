@@ -1,11 +1,7 @@
-const pick = require('object.pick')
 const db = require('../db')
 const { ObjectID } = require('mongodb')
 
 function equal(a, b){
-    //if(!a.every((x)=> b.includes(x)) || !b.every((x)=> a.includes(x))){
-    //    return false
-    //}
     for(let key of Object.keys(b)){
         if(Array.isArray(a[key])){
             if(!a[key].includes(b[key])){
@@ -71,7 +67,8 @@ function isAllowedToResource(token, resourceName, resource, permission) {
                     if(p.filter === undefined){
                         return true
                     }
-                    if (equal(pick(resource, Object.keys(p.filter)), p.filter)){
+                    if(equal(resource, p.filter)){
+                    //if (equal(pick(resource, Object.keys(p.filter)), p.filter)){
                         return true
                     }
                 }
