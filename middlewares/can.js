@@ -1,6 +1,13 @@
 const db = require('../db')
 const { ObjectID } = require('mongodb')
 
+function makeError(description){
+    const error = new Error()
+    error.code = 'not-allowed'
+    error.description = description
+    return error
+}
+
 function includes(a, b){
     for(let key of Object.keys(b)){
         if(Array.isArray(a[key])){
@@ -16,65 +23,45 @@ function includes(a, b){
     return true
 }
 
-function can({action, target=null}){
-    if(target === null){
-        return function(req, res, next){
-            if(isAllowed(req.token, action)){
-                next()
+// POST /api/private/memorandum/:_id
+const demo = {
+    permissions: {
+        'user:memorandum:update': {
+            tea: { sede: 'A'},
+            memorandum: {author: '$user_id' }
+        }
+    }
+}
+
+function can(permission, resources) {
+    return async function(req, res, next){
+        const p = req.token.permissions[permission]
+        if(p === undefined){            
+            return next(makeError('has not got permission'))
+        }
+        if(p === true){
+            return next()
+        }
+        req.filters = p
+        req.objs = {}
+        let obj = null
+        for(let r of resources){
+            let _id = null
+            if(r._id === '$_id'){
+                _id = new ObjectID(req.params._id)                
             }else{
-                const error = new Error()
-                error.code = 'not-allowed'
-                error.description = 'can not access. Action: ' + action
-                next(error)
+                const [resource, sub_id] = r._id.split('.')
+                _id = new ObjectID(req.objs[resource][sub_id])
+            }
+            obj = await db.get().collection(r.collection).findOne({_id})
+            req.objs[r.collection] = obj
+
+            if(!includes(obj, p[r.collection])){
+                return next(makeError('filter is not included'))
             }
         }
-    }else{
-        return async function(req, res, next){
-            try{
-                const _id = new ObjectID(req.params.id)
-                const r = await db.get().collection('users').findOne({_id})
-                if(isAllowedToResource(req.token, target, r, action)){
-                    next()
-                }else{
-                    const error = new Error()
-                    error.code = 'not-allowed'
-                    error.description = 'can not access. Action: ' + action + '. Target: ' + target
-                    next(error)
-                }
-            }catch(err){
-                next(err)
-            }
-        }
+        return next()
     }
-}
-   
-function isAllowed(token, permission) {
-    for (let p of token.allow) {
-        if(p.resource === '*'){
-            if(p.permissions.includes(permission)){
-                return true
-            }
-        }
-    }
-    return false
 }
 
-function isAllowedToResource(token, resourceName, resource, permission) {
-    for (let x of token.allow) {
-        if(x.resource === resourceName){
-            for(let p of x.permissions){
-                if(p.permission === permission){
-                    if(p.filter === undefined){
-                        return true
-                    }
-                    if(includes(resource, p.filter)){
-                        return true
-                    }
-                }
-            }
-        }
-    }
-    return false
-}
-
-module.exports = { can, includes, isAllowed, isAllowedToResource }
+module.exports = { can, includes }
