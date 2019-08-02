@@ -14,10 +14,10 @@ let token = {
     userId: 'userxxx',
     rol: 'coordinador:cartagena',
     permissions: {
-        'user:memorandum:update': {
+        'user:memorandum:update': [{
             tea: { sede: 'B'},
             memorandum: {author: 'userxxx' }
-        }
+        }]
     }
 }
 

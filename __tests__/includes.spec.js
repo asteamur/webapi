@@ -10,8 +10,12 @@ describe('test includes', () => {
         expect(includes({}, {a: 1})).toBe(false)
     })
 
+    test('not empty empty', () => {
+        expect(includes({a: 1}, {})).toBe(true)
+    })
+
     test('includes', () => {
-        expect(includes({a: 1}, {a: 1})).toBe(true)
+        expect(includes({a: 1, b: 1}, {a: 1})).toBe(true)
     })
 
     test('includes more than one', () => {
