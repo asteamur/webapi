@@ -42,4 +42,11 @@ describe('test includes', () => {
         expect(includes({a: 1}, {b: 1})).toBe(false)
     })
 
+    test('array in filter includes', () => {
+        expect(includes({a: 1}, {a: [1, 2, 3]})).toBe(true)
+    })
+
+    test('array in filter not includes', () => {
+        expect(includes({a: 11}, {a: [1, 2, 3]})).toBe(false)
+    })
 })

@@ -14,6 +14,10 @@ function includes(a, b){
             if(!a[key].includes(b[key])){
                 return false
             }
+        }else if(Array.isArray(b[key])){
+            if(!b[key].includes(a[key])){
+                return false
+            }
         }else{
             if(a[key] !== b[key]){
                 return false
