@@ -15,7 +15,7 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    command: nodemon app.js --ignore __tests__/*.js
+    command: nodemon app.js --config nodemon.json
   db:
     image: mongo
     ports:

@@ -56,7 +56,20 @@ function hasPermission(permissions, objs){
     return false
 }
 
-function can(permission, resources) {
+function can(permission){
+    return function(req, res, next){
+        console.log(req.token.permissions, permission)
+        const p = req.token.permissions[permission]
+        if(p === undefined){            
+            return next(makeError('has not got permission'))
+        }else{
+            req.filters = p
+            return next()
+        }
+    }
+}
+
+function _can(permission, resources) {
     return async function(req, res, next){
         const ap = req.token.permissions[permission]
         if(ap === undefined){            

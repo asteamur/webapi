@@ -1,9 +1,9 @@
 const express = require('express')
 //const bodyParser = require('body-parser')
 const jwt = require('express-jwt')
-//const expressMongoDb = require('express-mongo-db')
-const testRoutes = require('./routes/testing/testPermissions')
-const errorCan = require('./middlewares/errorCan')
+//const testRoutes = require('./routes/testing/testPermissions')
+const memRoutes = require('./routes/memorandum')
+//const errorCan = require('./middlewares/errorCan')
 const db = require('./db')
 
 const app = express()
@@ -12,9 +12,14 @@ const app = express()
 
 app.use('/api/private', jwt({secret: process.env.SECRET, requestProperty: 'token'}))
 
-app.use('/api/private/testing', testRoutes)
+app.use('/api/private/memorandum', memRoutes)
+//app.use('/api/private/testing', testRoutes)
+//app.use(errorCan)
 
-app.use(errorCan)
+app.use(function(err, req, res, next) {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 db.connect(process.env.DB_URI, {useNewUrlParser: true}, function(err) {
   if (err) {
