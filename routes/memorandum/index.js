@@ -21,7 +21,7 @@ router.get('/', querymen.middleware({tea_id: {type: String}, namespace: {type: S
         const p2 = db.get().collection('tea').findOne({_id: tea_id, ...filters.tea})
         const values = await Promise.all([p1, p2])
         if(!values[1]){
-            res.json(error, 'no tea')
+            res.json({error: 'no tea'})
         }else{
             res.json(values[0])    
         }

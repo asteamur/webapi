@@ -17,14 +17,14 @@ let token = {
     permissions: {
         'tea:memorandum:find': {
             tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]},
-            memorandum: {author: 'userxxx' }
+            memorandum: {author: 'useryyy' }
         }
     }
 }
 
 token = jwt.sign(token, 'secret')
 
-describe('test ', () => {
+describe('test fail return empty array', () => {
     let tea_id = new ObjectID()
     let memorandum_id = new ObjectID()
 
@@ -41,17 +41,11 @@ describe('test ', () => {
         await db.collection('memorandum').insertOne({
             _id: memorandum_id,
             tea_id,
-            namespace: 'xxx',
+            namespace: 'zzz',
             author: 'userxxx',
             text: ';)'
         })  
-        
-        await db.collection('memorandum').insertOne({
-            tea_id,
-            namespace: 'xxx',
-            author: 'useryyy',
-            text: ';) !!!'
-        })
+
     })
 
     afterAll(async () => {
@@ -63,7 +57,7 @@ describe('test ', () => {
     test('allow', async () => {
         expect.assertions(1)
         const response = await axios.get(
-          'http://localhost:3000/api/private/memorandum/?namespace=xxx&tea_id=' + tea_id,
+          'http://localhost:3000/api/private/memorandum/?namespace=zzz&tea_id=' + tea_id,
           {
             headers: {
               Authorization: "Bearer " + token
@@ -71,13 +65,7 @@ describe('test ', () => {
           }
         )
  
-        expect(response.data).toEqual([{
-            _id: memorandum_id + '',
-            tea_id: tea_id + '',
-            namespace: 'xxx',
-            author: 'userxxx',
-            text: ';)'
-        }]);  
+        expect(response.data).toEqual([]);  
         //expect(response.status).toEqual(200)
       });
 })

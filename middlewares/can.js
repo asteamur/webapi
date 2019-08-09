@@ -58,7 +58,6 @@ function hasPermission(permissions, objs){
 
 function can(permission){
     return function(req, res, next){
-        console.log(req.token.permissions, permission)
         const p = req.token.permissions[permission]
         if(p === undefined){            
             return next(makeError('has not got permission'))
