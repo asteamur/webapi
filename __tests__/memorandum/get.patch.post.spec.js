@@ -329,7 +329,7 @@ describe('test ', () => {
           }
         )
         expect(response.data._id).not.toBeUndefined();
-        const doc = await db.collection('memorandum').findOne({ _id: new ObjectID(response.data._id) }, {projection: {_id: 0, text: 1}})  
-        expect(doc).toEqual({text: 'game over!'})  
+        const doc = await db.collection('memorandum').findOne({ _id: new ObjectID(response.data._id) }, {projection: {_id: 0, author:1, text: 1}})  
+        expect(doc).toEqual({author: 'userxxx', text: 'game over!'})  
       });  
 })

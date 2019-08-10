@@ -4,8 +4,12 @@ const db = require('../../db')
 const querymen = require('querymen')
 const { can } = require('../../middlewares/can')
 const asyncHandler = require('express-async-handler')
+const { Validator, ValidationError } = require('express-json-validator-middleware')
 
 const router = Router()
+
+const validator = new Validator({removeAdditional: true, allErrors: true})
+const validate = validator.validate
 
 router.get('/:_id', can('tea:memorandum:find'), 
     asyncHandler(async function (req, res) {
@@ -58,7 +62,24 @@ router.get('/', querymen.middleware({tea_id: {type: String}}),
         }
     }))
 
-router.patch('/:_id', can('tea:memorandum:patch'), 
+MemorandumSchema = {
+    additionalProperties: false,
+    type: 'object',
+    required: ['text'],
+    properties: {
+        text: {
+            type: 'string'
+        },
+        author: {
+            type: 'string'
+        },
+        tea_id: {
+            type: 'string'
+        }
+    }
+}
+
+router.patch('/:_id', can('tea:memorandum:patch'), validate({body: MemorandumSchema}),
     asyncHandler(async function (req, res) {
         let _id = null
         try{
@@ -85,7 +106,7 @@ router.patch('/:_id', can('tea:memorandum:patch'),
         }
     }))
 
-router.post('/', can('tea:memorandum:post'), 
+router.post('/', can('tea:memorandum:post'), validate({body: MemorandumSchema}),
     asyncHandler(async function (req, res) {
         let _id = null
         const filters = req.filters 

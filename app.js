@@ -4,6 +4,7 @@ const jwt = require('express-jwt')
 //const testRoutes = require('./routes/testing/testPermissions')
 const memRoutes = require('./routes/memorandum')
 //const errorCan = require('./middlewares/errorCan')
+const validationError = require('./middlewares/validationError')
 const db = require('./db')
 
 const app = express()
@@ -21,6 +22,8 @@ app.use('/api/private', jwt({secret: process.env.SECRET, requestProperty: 'token
 app.use('/api/private/memorandum', memRoutes)
 //app.use('/api/private/testing', testRoutes)
 //app.use(errorCan)
+
+app.use(validationError)
 
 app.use(function(err, req, res, next) {
   console.error(err.stack);
