@@ -1,5 +1,5 @@
 const express = require('express')
-//const bodyParser = require('body-parser')
+const bodyParser = require('body-parser')
 const jwt = require('express-jwt')
 //const testRoutes = require('./routes/testing/testPermissions')
 const memRoutes = require('./routes/memorandum')
@@ -9,6 +9,12 @@ const db = require('./db')
 const app = express()
 
 //app.use(expressMongoDb(process.env.DB_URI, {useNewUrlParser: true}))
+
+// parse application/x-www-form-urlencoded
+//app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 
 app.use('/api/private', jwt({secret: process.env.SECRET, requestProperty: 'token'}))
 

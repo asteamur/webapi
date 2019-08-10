@@ -7,10 +7,41 @@ const asyncHandler = require('express-async-handler')
 
 const router = Router()
 
-router.get('/', querymen.middleware({tea_id: {type: String}, namespace: {type: String}}), 
+router.get('/:_id', can('tea:memorandum:find'), 
+    asyncHandler(async function (req, res) {
+        let _id = null
+        try{
+            _id = new ObjectID(req.params._id)
+        }catch(err){
+            return res.json({error: 'bad _id'})
+        }
+        const filters = req.filters 
+        query = { _id, ...filters.memorandum }
+        const select = {_id: 1, text: 1}
+        const doc = await db.get().collection('memorandum').findOne(query, select)
+        if(doc === null){
+            res.json({error: 'no memorandum'})
+        }else{
+            const tea_id = new ObjectID(doc.tea_id)
+            const t = await db.get().collection('tea').findOne({_id: tea_id, ...filters.tea})
+            
+            if(!t){
+                res.json({error: 'no tea'})
+            }else{
+                res.json(doc)    
+            }
+        }
+    }))
+
+router.get('/', querymen.middleware({tea_id: {type: String}}), 
     can('tea:memorandum:find'), 
     asyncHandler(async function (req, res) {
-        const tea_id = new ObjectID(req.query.tea_id)
+        let tea_id = null
+        try{
+            tea_id = new ObjectID(req.query.tea_id)
+        }catch(err){
+            return res.json({error: 'bad _id'})
+        }
         let {query, select, cursor} = req.querymen
         query.tea_id = tea_id
         const filters = req.filters 
@@ -24,6 +55,53 @@ router.get('/', querymen.middleware({tea_id: {type: String}, namespace: {type: S
             res.json({error: 'no tea'})
         }else{
             res.json(values[0])    
+        }
+    }))
+
+router.patch('/:_id', can('tea:memorandum:patch'), 
+    asyncHandler(async function (req, res) {
+        let _id = null
+        try{
+            _id = new ObjectID(req.params._id)
+        }catch(err){
+            return res.json({error: 'bad _id'})
+        }
+        const filters = req.filters 
+        query = { _id, ...filters.memorandum }
+        const select = {_id: 1}
+        const doc = await db.get().collection('memorandum').findOne(query, select)
+        if(doc === null){
+            res.json({error: 'no memorandum'})
+        }else{
+            const tea_id = new ObjectID(doc.tea_id)
+            const t = await db.get().collection('tea').findOne({_id: tea_id, ...filters.tea})
+            
+            if(!t){
+                res.json({error: 'no tea'})
+            }else{
+                await db.get().collection('memorandum').updateOne({_id}, {$set: req.body})
+                res.json({})   
+            }
+        }
+    }))
+
+router.post('/', can('tea:memorandum:post'), 
+    asyncHandler(async function (req, res) {
+        let _id = null
+        const filters = req.filters 
+        const doc = req.body
+        try{
+            _id = new ObjectID(doc.tea_id)
+            doc.tea_id = _id
+        }catch(err){
+            return res.json({error: 'bad _id'})
+        }
+        const t = await db.get().collection('tea').findOne({_id, ...filters.tea})
+        if(!t){
+            res.json({error: 'no tea'})
+        }else{
+            const r = await db.get().collection('memorandum').insertOne(doc)
+            res.json({_id: r.insertedId})
         }
     }))
 
