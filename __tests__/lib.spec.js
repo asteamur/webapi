@@ -14,3 +14,12 @@ describe('test sanitize select', () => {
         expect(select).toEqual({c:1})
     })
 })
+
+describe('test sanitize query', () => {
+    
+    test('filter $', () => {
+        let query = {a: {$gte: 5}, $b: 2}
+        query = sanitizeQuery(query)
+        expect(query).toEqual({a: {$gte: 5}})
+    })
+})

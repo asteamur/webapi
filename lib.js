@@ -1,6 +1,7 @@
-function sanitizeQuery(query){
+const sanitize = require('mongo-sanitize')
 
-    return query
+function sanitizeQuery(query){
+    return sanitize(query)
 }
 
 function sanitizeSelect(select){
