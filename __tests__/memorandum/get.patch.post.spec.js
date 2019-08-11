@@ -96,19 +96,21 @@ describe('test ', () => {
         }
 
         token = jwt.sign(token, 'secret')
-
-        const response = await axios.get(
-          'http://localhost:3000/api/private/memorandum/' + memorandum_id,
-          {
-            headers: {
-              Authorization: "Bearer " + token
+        try{
+          const response = await axios.get(
+            'http://localhost:3000/api/private/memorandum/' + memorandum_id,
+            {
+              headers: {
+                Authorization: "Bearer " + token
+              }
             }
-          }
-        )
-
-        expect(response.data).toEqual({
-            error: 'no tea'
-        });  
+          )
+        }catch(err){
+          expect(err.response.status).toEqual(401)
+        }
+        //expect(response.data).toEqual({
+        //    error: 'no tea'
+        //});  
 
       });
 
@@ -128,21 +130,24 @@ describe('test ', () => {
 
         token = jwt.sign(token, 'secret')
 
-        const response = await axios.get(
-          'http://localhost:3000/api/private/memorandum/000',
-          {
-            headers: {
-              Authorization: "Bearer " + token
+        try{
+          const response = await axios.get(
+            'http://localhost:3000/api/private/memorandum/000',
+            {
+              headers: {
+                Authorization: "Bearer " + token
+              }
             }
-          }
-        )
- 
-        expect(response.data).toEqual({
-            error: 'bad _id'
-        });  
+          )
+        }catch(err){
+          expect(err.response.status).toEqual(400)
+        }
+        //expect(response.data).toEqual({
+        //    error: 'bad _id'
+        //});  
       });
     
-      test('find one fail because bad _id', async () => {
+      test('find one fail because memorandum', async () => {
         expect.assertions(1)
 
         let token = {
@@ -158,18 +163,21 @@ describe('test ', () => {
 
         token = jwt.sign(token, 'secret')
 
-        const response = await axios.get(
-          'http://localhost:3000/api/private/memorandum/' + tea_id,
-          {
-            headers: {
-              Authorization: "Bearer " + token
+        try{
+          const response = await axios.get(
+            'http://localhost:3000/api/private/memorandum/' + tea_id,
+            {
+              headers: {
+                Authorization: "Bearer " + token
+              }
             }
-          }
-        )
- 
-        expect(response.data).toEqual({
-            error: 'no memorandum'
-        });  
+          )
+        }catch(err){
+          expect(err.response.status).toEqual(401)
+        }
+        //expect(response.data).toEqual({
+        //    error: 'no memorandum'
+        //});  
       });
   
 
@@ -225,18 +233,21 @@ describe('test ', () => {
         
         token = jwt.sign(token, 'secret')
 
-        const response = await axios.get(
-          'http://localhost:3000/api/private/memorandum/?namespace=xxx&tea_id=' + tea_id,
-          {
-            headers: {
-              Authorization: "Bearer " + token
+        try{
+          const response = await axios.get(
+            'http://localhost:3000/api/private/memorandum/?namespace=xxx&tea_id=' + tea_id,
+            {
+              headers: {
+                Authorization: "Bearer " + token
+              }
             }
-          }
-        )
- 
-        expect(response.data).toEqual({
-            error: 'no tea'
-        });  
+          )
+        }catch(err){
+          expect(err.response.status).toEqual(401)
+        }
+        //expect(response.data).toEqual({
+        //    error: 'no tea'
+        //});  
         //expect(response.status).toEqual(200)
       });
 

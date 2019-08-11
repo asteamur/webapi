@@ -3,6 +3,8 @@ const bodyParser = require('body-parser')
 const jwt = require('express-jwt')
 //const testRoutes = require('./routes/testing/testPermissions')
 const memRoutes = require('./routes/memorandum')
+const authError = require('./middlewares/authError')
+const badIdError = require('./middlewares/bad_idError')
 //const errorCan = require('./middlewares/errorCan')
 const validationError = require('./middlewares/validationError')
 const db = require('./db')
@@ -24,6 +26,8 @@ app.use('/api/private/memorandum', memRoutes)
 //app.use(errorCan)
 
 app.use(validationError)
+app.use(authError)
+app.use(badIdError)
 
 app.use(function(err, req, res, next) {
   console.error(err.stack);
