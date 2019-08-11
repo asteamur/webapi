@@ -4,8 +4,8 @@ const db = require('../../db')
 const querymen = require('querymen')
 const { can } = require('../../middlewares/can')
 const asyncHandler = require('express-async-handler')
-const { Validator, ValidationError } = require('express-json-validator-middleware')
-
+const { Validator } = require('express-json-validator-middleware')
+const { sanitizeQuery, sanitizeSelect } = require('../../lib')
 const router = Router()
 
 const validator = new Validator({removeAdditional: true, allErrors: true})
@@ -47,6 +47,8 @@ router.get('/', querymen.middleware({tea_id: {type: String}}),
             return res.json({error: 'bad _id'})
         }
         let {query, select, cursor} = req.querymen
+        query = sanitizeQuery(query)
+        select = sanitizeSelect(select)
         query.tea_id = tea_id
         const filters = req.filters 
         query = {...query, ...filters.memorandum}

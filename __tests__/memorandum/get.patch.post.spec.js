@@ -332,4 +332,37 @@ describe('test ', () => {
         const doc = await db.collection('memorandum').findOne({ _id: new ObjectID(response.data._id) }, {projection: {_id: 0, author:1, text: 1}})  
         expect(doc).toEqual({author: 'userxxx', text: 'game over!'})  
       });  
+
+      test('allow post discard additionals', async () => {
+        expect.assertions(2)
+
+        let token = {
+            userId: 'userxxx',
+            rol: 'coordinador:cartagena',
+            permissions: {
+                'tea:memorandum:post': {
+                    tea: {therapists: 'th1'}
+                }
+            }
+        }
+
+        token = jwt.sign(token, 'secret')
+
+        const response = await axios.post(
+          'http://localhost:3000/api/private/memorandum',
+          {
+            tea_id: tea_id + '',
+            author: 'userxxx',
+            text: 'game over!',
+            add: 'hello'},
+          {
+            headers: {
+              Authorization: "Bearer " + token
+            }
+          }
+        )
+        expect(response.data._id).not.toBeUndefined();
+        const doc = await db.collection('memorandum').findOne({ _id: new ObjectID(response.data._id) }, {projection: {_id: 0, add: 1}})  
+        expect(doc).toEqual({})  
+      });  
 })
