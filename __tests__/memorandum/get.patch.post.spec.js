@@ -199,7 +199,7 @@ describe('test ', () => {
         token = jwt.sign(token, 'secret')
 
         const response = await axios.get(
-          'http://localhost:3000/api/private/memorandum/?namespace=xxx&tea_id=' + tea_id,
+          'http://localhost:3000/api/private/memorandum/?tea_id=' + tea_id + '&fields=text,author',
           {
             headers: {
               Authorization: "Bearer " + token
@@ -209,8 +209,6 @@ describe('test ', () => {
  
         expect(response.data).toEqual([{
             _id: memorandum_id + '',
-            tea_id: tea_id + '',
-            namespace: 'xxx',
             author: 'userxxx',
             text: ';)'
         }]);  

@@ -13,66 +13,41 @@ const validator = new Validator({removeAdditional: true, allErrors: true})
 const validate = validator.validate
 
 
-router.get('/:_id', can('tea:memorandum:get'), 
+router.get('/:_id', querymen.middleware(), can('tea:get'), 
     asyncHandler(async function (req, res) {
+        let { select } = req.querymen
+        select = sanitizeSelect(select)
         let _id = null
         try{
             _id = new ObjectID(req.params._id)
         }catch(err){
             throw(IdError())
-            //return res.json({error: 'bad _id'})
         }
         const filters = req.filters 
-        query = { _id, ...filters.memorandum }
-        const select = {_id: 1, text: 1}
-        const doc = await db.get().collection('memorandum').findOne(query, select)
+        query = { _id, ...filters.tea }
+        const doc = await db.get().collection('tea').findOne(query, {projection: select})
         if(doc === null){
-            throw(AuthError('no memorandum'))
-            //res.json({error: 'no memorandum'})
+            throw(AuthError('no tea'))
         }else{
-            const tea_id = new ObjectID(doc.tea_id)
-            const t = await db.get().collection('tea').findOne({_id: tea_id, ...filters.tea})
-            
-            if(!t){
-                throw(AuthError('no tea'))
-                //res.json({error: 'no tea'})
-            }else{
-                res.json(doc)    
-            }
+            res.json(doc)    
         }
     }))
 
-router.get('/', querymen.middleware({tea_id: {type: String}}), 
-    can('tea:memorandum:get'), 
+router.get('/', querymen.middleware({sede: {type: String}, center: {type: String}}), 
+    can('tea:get'), 
     asyncHandler(async function (req, res) {
-        let tea_id = null
-        try{
-            tea_id = new ObjectID(req.query.tea_id)
-        }catch(err){
-            throw(IdError())
-            //return res.json({error: 'bad _id'})
-        }
         let {query, select, cursor} = req.querymen
         query = sanitizeQuery(query)
         select = sanitizeSelect(select)
-
-        query.tea_id = tea_id
         const filters = req.filters 
-        query = {...query, ...filters.memorandum}
+        query = {...query, ...filters.tea}
 
-        const p1 = db.get().collection('memorandum').find(query, {projection: select}).
+        const teas = await db.get().collection('tea').find(query, {projection: select}).
             limit(cursor.limit).skip(cursor.skip).sort(cursor.sort).toArray()    
-        const p2 = db.get().collection('tea').findOne({_id: tea_id, ...filters.tea})
-        const values = await Promise.all([p1, p2])
-        if(!values[1]){
-            throw(AuthError('no tea'))
-            //res.json({error: 'no tea'})
-        }else{
-            res.json(values[0])    
-        }
+        res.json(teas)
     }))
-
-MemorandumSchema = {
+/*
+TeaSchema = {
     additionalProperties: false,
     type: 'object',
     required: ['text'],
@@ -140,5 +115,5 @@ router.post('/', can('tea:memorandum:post'), validate({body: MemorandumSchema}),
             res.json({_id: r.insertedId})
         }
     }))
-
+*/
 module.exports = router;
