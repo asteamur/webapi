@@ -1,5 +1,7 @@
 const db = require('../db')
 const { ObjectID } = require('mongodb')
+const substitute = require('token-substitute');
+const roles = require('../roles')
 
 function makeError(description){
     const error = new Error()
@@ -58,12 +60,28 @@ function hasPermission(permissions, objs){
 
 function can(permission){
     return function(req, res, next){
-        const p = req.token.permissions[permission]
-        if(p === undefined){            
-            return next(makeError('has not got permission'))
-        }else{
+        const permissions = roles[req.token.role]
+        if(permissions){
+            let p = permissions[permission]
+            if(p === undefined){            
+                return next(makeError('has not got permission'))
+            }
+            const options = {
+                tokens: {
+                  'userId': req.token.userId
+                }
+            }
+            p = substitute(p, options)
             req.filters = p
             return next()
+        }else{
+            const p = req.token.permissions[permission]
+            if(p === undefined){            
+                return next(makeError('has not got permission'))
+            }else{
+                req.filters = p
+                return next()
+            }
         }
     }
 }

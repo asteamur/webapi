@@ -51,13 +51,13 @@ describe('test ', () => {
 
         let token = {
             userId: 'userxxx',
-            rol: 'coordinador:cartagena',
-            permissions: {
+            role: 'test.1',
+            /*permissions: {
                 'tea:memorandum:find': {
                     tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]},
                     memorandum: {author: 'userxxx' }
                 }
-            }
+            }*/
         }
 
         token = jwt.sign(token, 'secret')
@@ -86,13 +86,13 @@ describe('test ', () => {
 
         let token = {
             userId: 'userxxx',
-            rol: 'coordinador:cartagena',
-            permissions: {
+            role: 'test.2',
+            /*permissions: {
                 'tea:memorandum:find': {
                     tea: {$or: [{sede: {$in: ['B', 'C']}}, {center: 'CEIP 1'}]},
                     memorandum: {author: 'userxxx' }
                 }
-            }
+            }*/
         }
 
         token = jwt.sign(token, 'secret')
@@ -119,13 +119,13 @@ describe('test ', () => {
 
         let token = {
             userId: 'userxxx',
-            rol: 'coordinador:cartagena',
-            permissions: {
+            role: 'test.1',
+            /*permissions: {
                 'tea:memorandum:find': {
                     tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]},
                     memorandum: {author: 'userxxx' }
                 }
-            }
+            }*/
         }
 
         token = jwt.sign(token, 'secret')
@@ -152,13 +152,13 @@ describe('test ', () => {
 
         let token = {
             userId: 'userxxx',
-            rol: 'coordinador:cartagena',
-            permissions: {
+            role: 'test.1',
+            /*permissions: {
                 'tea:memorandum:find': {
                     tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]},
                     memorandum: {author: 'userxxx' }
                 }
-            }
+            }*/
         }
 
         token = jwt.sign(token, 'secret')
@@ -187,13 +187,13 @@ describe('test ', () => {
 
         let token = {
             userId: 'userxxx',
-            rol: 'coordinador:cartagena',
-            permissions: {
+            role: 'test.1',
+            /*permissions: {
                 'tea:memorandum:find': {
                     tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]},
                     memorandum: {author: 'userxxx' }
                 }
-            }
+            }*/
         }
 
         token = jwt.sign(token, 'secret')
@@ -222,13 +222,13 @@ describe('test ', () => {
 
         let token = {
             userId: 'userxxx',
-            rol: 'coordinador:cartagena',
-            permissions: {
+            role: 'test.2',
+            /*permissions: {
                 'tea:memorandum:find': {
                     tea: {$or: [{sede: {$in: ['B', 'C']}}, {center: 'CEIP 1'}]},
                     memorandum: {author: 'userxxx' }
                 }
-            }
+            }*/
         }
         
         token = jwt.sign(token, 'secret')
@@ -256,13 +256,13 @@ describe('test ', () => {
 
         let token = {
             userId: 'userxxx',
-            rol: 'coordinador:cartagena',
-            permissions: {
+            role: 'test.3',
+            /*permissions: {
                 'tea:memorandum:find': {
                     tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]},
                     memorandum: {author: 'userzzz' }
                 }
-            }
+            }*/
         }
         
         token = jwt.sign(token, 'secret')
@@ -285,13 +285,13 @@ describe('test ', () => {
 
         let token = {
             userId: 'userxxx',
-            rol: 'coordinador:cartagena',
-            permissions: {
+            role: 'test.1',
+            /*permissions: {
                 'tea:memorandum:patch': {
                     tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]},
                     memorandum: {author: 'userxxx' }
                 }
-            }
+            }*/
         }
 
         token = jwt.sign(token, 'secret')
@@ -316,13 +316,13 @@ describe('test ', () => {
         expect.assertions(2)
 
         let token = {
-            userId: 'userxxx',
-            rol: 'coordinador:cartagena',
-            permissions: {
+            userId: 'th1',
+            role: 'test.th',
+            /*permissions: {
                 'tea:memorandum:post': {
                     tea: {therapists: 'th1'}
                 }
-            }
+            }*/
         }
 
         token = jwt.sign(token, 'secret')
@@ -348,13 +348,13 @@ describe('test ', () => {
         expect.assertions(2)
 
         let token = {
-            userId: 'userxxx',
-            rol: 'coordinador:cartagena',
-            permissions: {
+            userId: 'th1',
+            role: 'test.th',
+            /*permissions: {
                 'tea:memorandum:post': {
                     tea: {therapists: 'th1'}
                 }
-            }
+            }*/
         }
 
         token = jwt.sign(token, 'secret')

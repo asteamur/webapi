@@ -585,6 +585,11 @@ toidentifier@1.0.0:
   resolved "https://registry.yarnpkg.com/toidentifier/-/toidentifier-1.0.0.tgz#7e1be3470f1e77948bc43d94a3c8f4d7752ba553"
   integrity sha512-yaOH/Pk/VEhBWWTlhI+qXxDFXlejDGcQipMlyxda9nthulaxLZUNcUqFxokp0vcYnvteJln5FNQDRrxj3YcbVw==
 
+token-substitute@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/token-substitute/-/token-substitute-1.2.0.tgz#dd0efdd9aec6d951204b485fb3188d5dee5fe6aa"
+  integrity sha1-3Q792a7G2VEgS0hfsxiNXe5f5qo=
+
 type-is@~1.6.17, type-is@~1.6.18:
   version "1.6.18"
   resolved "https://registry.yarnpkg.com/type-is/-/type-is-1.6.18.tgz#4e552cd05df09467dcbc4ef739de89f2cf37c131"
