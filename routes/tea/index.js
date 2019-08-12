@@ -25,7 +25,7 @@ router.get('/:_id', querymen.middleware(), can('tea:get'),
         }
         const filters = req.filters 
         query = { _id, ...filters.tea }
-        const doc = await db.get().collection('tea').findOne(query, {projection: select})
+        const doc = await db.get().collection('user').findOne(query, {projection: select})
         if(doc === null){
             throw(AuthError('no tea'))
         }else{
@@ -42,7 +42,7 @@ router.get('/', querymen.middleware({sede: {type: String}, center: {type: String
         const filters = req.filters 
         query = {...query, ...filters.tea}
 
-        const teas = await db.get().collection('tea').find(query, {projection: select}).
+        const teas = await db.get().collection('user').find(query, {projection: select}).
             limit(cursor.limit).skip(cursor.skip).sort(cursor.sort).toArray()    
         res.json(teas)
     }))
@@ -82,7 +82,7 @@ router.patch('/:_id', can('tea:memorandum:patch'), validate({body: MemorandumSch
             //res.json({error: 'no memorandum'})
         }else{
             const tea_id = new ObjectID(doc.tea_id)
-            const t = await db.get().collection('tea').findOne({_id: tea_id, ...filters.tea})
+            const t = await db.get().collection('user').findOne({_id: tea_id, ...filters.tea})
             
             if(!t){
                 throw(AuthError('no tea'))
@@ -106,7 +106,7 @@ router.post('/', can('tea:memorandum:post'), validate({body: MemorandumSchema}),
             //return res.json({error: 'bad _id'})
         }
         doc.tea_id = _id
-        const t = await db.get().collection('tea').findOne({_id, ...filters.tea})
+        const t = await db.get().collection('user').findOne({_id, ...filters.tea})
         if(!t){
             throw(AuthError('no tea'))
             //res.json({error: 'no tea'})

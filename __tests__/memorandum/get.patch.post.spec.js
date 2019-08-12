@@ -16,7 +16,7 @@ describe('test ', () => {
     beforeAll(async () => {
         await client.connect()
         db = client.db(dbName)
-        await db.collection('tea').insertOne({
+        await db.collection('user').insertOne({
         _id: tea_id,
         id: 'userxxx',
         sede: 'A',
@@ -41,7 +41,7 @@ describe('test ', () => {
     })
 
     afterAll(async () => {
-        await db.collection('tea').deleteOne({ _id: tea_id })    
+        await db.collection('user').deleteOne({ _id: tea_id })    
         await db.collection('memorandum').deleteMany({}) //.deleteOne({ _id: memorandum_id })    
         await client.close()
     })

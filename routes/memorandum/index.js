@@ -31,7 +31,7 @@ router.get('/:_id', can('tea:memorandum:get'),
             //res.json({error: 'no memorandum'})
         }else{
             const tea_id = new ObjectID(doc.tea_id)
-            const t = await db.get().collection('tea').findOne({_id: tea_id, ...filters.tea})
+            const t = await db.get().collection('user').findOne({_id: tea_id, ...filters.tea})
             
             if(!t){
                 throw(AuthError('no tea'))
@@ -62,7 +62,7 @@ router.get('/', querymen.middleware({tea_id: {type: String}}),
 
         const p1 = db.get().collection('memorandum').find(query, {projection: select}).
             limit(cursor.limit).skip(cursor.skip).sort(cursor.sort).toArray()    
-        const p2 = db.get().collection('tea').findOne({_id: tea_id, ...filters.tea})
+        const p2 = db.get().collection('user').findOne({_id: tea_id, ...filters.tea})
         const values = await Promise.all([p1, p2])
         if(!values[1]){
             throw(AuthError('no tea'))
@@ -107,7 +107,7 @@ router.patch('/:_id', can('tea:memorandum:patch'), validate({body: MemorandumSch
             //res.json({error: 'no memorandum'})
         }else{
             const tea_id = new ObjectID(doc.tea_id)
-            const t = await db.get().collection('tea').findOne({_id: tea_id, ...filters.tea})
+            const t = await db.get().collection('user').findOne({_id: tea_id, ...filters.tea})
             
             if(!t){
                 throw(AuthError('no tea'))
@@ -131,7 +131,7 @@ router.post('/', can('tea:memorandum:post'), validate({body: MemorandumSchema}),
             //return res.json({error: 'bad _id'})
         }
         doc.tea_id = _id
-        const t = await db.get().collection('tea').findOne({_id, ...filters.tea})
+        const t = await db.get().collection('user').findOne({_id, ...filters.tea})
         if(!t){
             throw(AuthError('no tea'))
             //res.json({error: 'no tea'})
