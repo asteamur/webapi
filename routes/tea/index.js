@@ -91,27 +91,15 @@ router.patch('/:_id', can('tea:patch'), validate({body: TeaSchema}),
         }
     }))
 
-    /*
-router.post('/', can('tea:memorandum:post'), validate({body: MemorandumSchema}),
+router.post('/', can('tea:post'), validate({body: TeaSchema}),
     asyncHandler(async function (req, res) {
-        let _id = null
-        const filters = req.filters 
         const doc = req.body
-        try{
-            _id = new ObjectID(doc.tea_id)
-        }catch(err){
-            throw(IdError())
-            //return res.json({error: 'bad _id'})
-        }
-        doc.tea_id = _id
-        const t = await db.get().collection('user').findOne({_id, ...filters.tea})
-        if(!t){
-            throw(AuthError('no tea'))
-            //res.json({error: 'no tea'})
-        }else{
-            const r = await db.get().collection('memorandum').insertOne(doc)
-            res.json({_id: r.insertedId})
-        }
-    }))
-*/
+        doc.type = 'tea'
+        doc.nameSearch = latinize(doc.name).toLocaleLowerCase()
+        const r = await db.get().collection('user').insertOne(doc)
+        res.json({_id: r.insertedId})        
+    })
+)
+
+    
 module.exports = router;

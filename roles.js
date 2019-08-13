@@ -13,6 +13,9 @@ module.exports = {
         },
         'tea:patch': {
             tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]}
+        },
+        'tea:post': {
+            tea: {}
         }
     },
     'test.2': {

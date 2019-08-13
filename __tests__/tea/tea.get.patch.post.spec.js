@@ -11,7 +11,6 @@ const client = new MongoClient(url);
 
 describe('test tea', () => {
     let tea_id = new ObjectID()
-    console.log(tea_id)
 
     beforeAll(async () => {
         await client.connect()
@@ -252,5 +251,57 @@ describe('test tea', () => {
             expect(err.response.status).toEqual(401)
         }
       });
+
+      test('allow post one tea', async () => {
+        expect.assertions(2)
+
+        let token = {
+            userId: 'userxxx',
+            role: 'test.1',
+        }
+
+        token = jwt.sign(token, 'secret')
+
+        const response = await axios.post(
+          'http://localhost:3000/api/private/tea',
+          {name: 'Bernardo'},
+          {
+            headers: {
+              Authorization: "Bearer " + token
+            }
+          }
+        )
+
+        expect(response.data._id).not.toBeUndefined();
+        const doc = await db.collection('user').findOne({ _id: new ObjectID(response.data._id) }, 
+              {projection: {_id: 0, name:1, nameSearch: 1}})  
+        expect(doc).toEqual({name: 'Bernardo', nameSearch: 'bernardo'})    
+      });
+
+      test('not allow post one tea', async () => {
+        expect.assertions(1)
+
+        let token = {
+            userId: 'userxxx',
+            role: 'test.2',
+        }
+
+        token = jwt.sign(token, 'secret')
+
+        try{
+            const response = await axios.post(
+            'http://localhost:3000/api/private/tea',
+            {name: 'Bernardo'},
+            {
+                headers: {
+                Authorization: "Bearer " + token
+                }
+            }
+            )
+        }catch(err){
+            expect(err.response.status).toEqual(401)
+        }
+      });
+
 
 })
