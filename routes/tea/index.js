@@ -13,6 +13,12 @@ const validator = new Validator({removeAdditional: true, allErrors: true})
 const validate = validator.validate
 
 
+const querySchema = {
+    sede: {type: [String]}, 
+    center: {type: [String]},
+    name: { type: RegExp }
+}
+
 router.get('/:_id', querymen.middleware(), can('tea:get'), 
     asyncHandler(async function (req, res) {
         let { select } = req.querymen
@@ -33,7 +39,7 @@ router.get('/:_id', querymen.middleware(), can('tea:get'),
         }
     }))
 
-router.get('/', querymen.middleware({sede: {type: String}, center: {type: String}}), 
+router.get('/', querymen.middleware(querySchema), 
     can('tea:get'), 
     asyncHandler(async function (req, res) {
         let {query, select, cursor} = req.querymen

@@ -10,7 +10,7 @@ function sanitizeSelect(select){
             obj[k] = 1
         }
         return obj
-    }, {})
+    }, {_id: 1})
 }
 
 module.exports = { sanitizeQuery, sanitizeSelect }
