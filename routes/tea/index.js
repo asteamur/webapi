@@ -7,6 +7,8 @@ const asyncHandler = require('express-async-handler')
 const { Validator } = require('express-json-validator-middleware')
 const { IdError, AuthError } = require('../../errors')
 const { sanitizeQuery, sanitizeSelect } = require('../../lib')
+const latinize = require('latinize')
+
 const router = Router()
 
 const validator = new Validator({removeAdditional: true, allErrors: true})
@@ -16,7 +18,7 @@ const validate = validator.validate
 const querySchema = {
     sede: {type: [String]}, 
     center: {type: [String]},
-    name: { type: RegExp }
+    name: { type: RegExp, paths: ['nameSearch'] }
 }
 
 router.get('/:_id', querymen.middleware(), can('tea:get'), 
@@ -30,7 +32,7 @@ router.get('/:_id', querymen.middleware(), can('tea:get'),
             throw(IdError())
         }
         const filters = req.filters 
-        query = { _id, ...filters.tea }
+        query = { _id, ...filters.tea, type: 'tea' }
         const doc = await db.get().collection('user').findOne(query, {projection: select})
         if(doc === null){
             throw(AuthError('no tea'))
@@ -46,60 +48,50 @@ router.get('/', querymen.middleware(querySchema),
         query = sanitizeQuery(query)
         select = sanitizeSelect(select)
         const filters = req.filters 
-        query = {...query, ...filters.tea}
+        query = {...query, ...filters.tea, type: 'tea'}
 
         const teas = await db.get().collection('user').find(query, {projection: select}).
             limit(cursor.limit).skip(cursor.skip).sort(cursor.sort).toArray()    
         res.json(teas)
     }))
-/*
+
+
 TeaSchema = {
     additionalProperties: false,
     type: 'object',
-    required: ['text'],
+    //required: ['text'],
     properties: {
-        text: {
+        name: {
             type: 'string'
         },
-        author: {
-            type: 'string'
-        },
-        tea_id: {
-            type: 'string'
+        dateOfBirth: {
+            type: 'number'
         }
     }
 }
 
-router.patch('/:_id', can('tea:memorandum:patch'), validate({body: MemorandumSchema}),
+router.patch('/:_id', can('tea:patch'), validate({body: TeaSchema}),
     asyncHandler(async function (req, res) {
         let _id = null
         try{
             _id = new ObjectID(req.params._id)
         }catch(err){
             throw(IdError())
-            //return res.json({error: 'bad _id'})
         }
         const filters = req.filters 
-        query = { _id, ...filters.memorandum }
-        const select = {_id: 1}
-        const doc = await db.get().collection('memorandum').findOne(query, select)
-        if(doc === null){
-            throw(AuthError('no memorandum'))
-            //res.json({error: 'no memorandum'})
+        query = { _id , ...filters.tea, type: 'tea' }
+        
+        const t = await db.get().collection('user').findOne(query)    
+        if(!t){
+            throw(AuthError('no tea'))
         }else{
-            const tea_id = new ObjectID(doc.tea_id)
-            const t = await db.get().collection('user').findOne({_id: tea_id, ...filters.tea})
-            
-            if(!t){
-                throw(AuthError('no tea'))
-                //res.json({error: 'no tea'})
-            }else{
-                await db.get().collection('memorandum').updateOne({_id}, {$set: req.body})
-                res.json({})   
-            }
+            const doc = {...req.body, nameSearch: latinize(req.body.name).toLowerCase()}
+            await db.get().collection('user').updateOne({_id}, {$set: doc})
+            res.json({})   
         }
     }))
 
+    /*
 router.post('/', can('tea:memorandum:post'), validate({body: MemorandumSchema}),
     asyncHandler(async function (req, res) {
         let _id = null

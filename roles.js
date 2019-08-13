@@ -11,11 +11,17 @@ module.exports = {
             tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]},
             memorandum: {author: '#{userId}' }
         },
+        'tea:patch': {
+            tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]}
+        }
     },
     'test.2': {
         'tea:memorandum:get': {
             tea: {$or: [{sede: {$in: ['B', 'C']}}, {center: 'CEIP 1'}]},
             memorandum: {author: '#{userId}' }
+        },
+        'tea:patch': {
+            tea: {$or: [{sede: {$in: ['AA', 'BB']}}, {center: 'CEIP 1'}]}
         }
     },
     'test.3': {

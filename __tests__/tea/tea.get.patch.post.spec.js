@@ -11,14 +11,17 @@ const client = new MongoClient(url);
 
 describe('test tea', () => {
     let tea_id = new ObjectID()
+    console.log(tea_id)
 
     beforeAll(async () => {
         await client.connect()
         db = client.db(dbName)
         await db.collection('user').insertOne({
             _id: tea_id,
+            type: 'tea',
             password: 'secret',
-            name: 'miguel',
+            name: 'Miguel',
+            nameSearch: 'miguel',
             sede: 'A',
             center: 'CC',
             therapists: ['th1', 'th2'],
@@ -162,7 +165,7 @@ describe('test tea', () => {
         token = jwt.sign(token, 'secret')
 
         const response = await axios.get(
-          'http://localhost:3000/api/private/tea/?name=igue&fields=name',
+          'http://localhost:3000/api/private/tea/?name=migue&fields=name',
           {
             headers: {
               Authorization: "Bearer " + token
@@ -172,7 +175,7 @@ describe('test tea', () => {
  
         expect(response.data).toEqual([{
             _id: tea_id + '',
-            name: 'miguel'
+            name: 'Miguel'
         }]);  
     });
 
@@ -197,5 +200,57 @@ describe('test tea', () => {
  
         expect(response.data).toEqual([]);  
     });
+
+    test('allow patch one tea', async () => {
+        expect.assertions(1)
+
+        let token = {
+            userId: 'userxxx',
+            role: 'test.1',
+        }
+
+        token = jwt.sign(token, 'secret')
+
+        const response = await axios.patch(
+          'http://localhost:3000/api/private/tea/' + tea_id,
+          {name: 'Miguelito'},
+          {
+            headers: {
+              Authorization: "Bearer " + token
+            }
+          }
+        )
+ 
+        const doc = await db.collection('user').findOne({ _id: tea_id }, 
+            {projection: {_id: 0, name: 1, nameSearch: 1}})  
+
+        //expect(response.status).toEqual(200);
+        expect(doc).toEqual({name: 'Miguelito', nameSearch: 'miguelito'})  
+      });
+
+      test('not allow patch one tea', async () => {
+        expect.assertions(1)
+
+        let token = {
+            userId: 'userxxx',
+            role: 'test.2',
+        }
+
+        token = jwt.sign(token, 'secret')
+
+        try{
+            const response = await axios.patch(
+            'http://localhost:3000/api/private/tea/' + tea_id,
+            {name: 'Miguelito'},
+            {
+                headers: {
+                Authorization: "Bearer " + token
+                }
+            }
+            )
+        }catch(err){
+            expect(err.response.status).toEqual(401)
+        }
+      });
 
 })
