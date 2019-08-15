@@ -7,11 +7,6 @@ const critialFormat = printf(({ level, message, label, timestamp }) => {
     return `${timestamp} ${level}: ${message}`
 })
 
-winston.add(new winston.transports.MongoDB({
-    db: process.env.DB_URI,
-    capped: true
-}))
-
 const logger = winston.createLogger({
     level: 'info',
     format: winston.format.json(),
