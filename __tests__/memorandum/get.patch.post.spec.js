@@ -165,7 +165,7 @@ describe('test ', () => {
 
         try{
           const response = await axios.get(
-            'http://localhost:3000/api/private/memorandum/' + tea_id,
+            'http://localhost:3000/api/private/memorandum/' + new ObjectID(),
             {
               headers: {
                 Authorization: "Bearer " + token

@@ -3,7 +3,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: dev.Dockerfile
+      dockerfile: test.Dockerfile
     environment:
     - DB_URI=mongodb://db:27017/test
     - DB_NAME=test
@@ -20,6 +20,3 @@ services:
     image: mongo
     ports:
     - "27017:27017"
-    volumes:
-      - ../data:/data/db
-

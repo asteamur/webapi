@@ -5,9 +5,10 @@ function AuthError(description){
     return error
 }
 
-function IdError(){
+function IdError(description){
     const error = new Error()
     error.code = 'bad _id'
+    error.description = description
     return error
 }
 

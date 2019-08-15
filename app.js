@@ -1,7 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const jwt = require('express-jwt')
-//const testRoutes = require('./routes/testing/testPermissions')
 const memRoutes = require('./routes/memorandum')
 const teaRoutes = require('./routes/tea')
 const authError = require('./middlewares/authError')
@@ -9,6 +8,7 @@ const badIdError = require('./middlewares/bad_idError')
 //const errorCan = require('./middlewares/errorCan')
 const validationError = require('./middlewares/validationError')
 const db = require('./db')
+const {logger, critialFile} = require('./logger')
 
 const app = express()
 
@@ -33,15 +33,18 @@ app.use(badIdError)
 
 app.use(function(err, req, res, next) {
   console.error(err.stack);
+  logger.error({error: err.stack})
   res.status(500).send('Something broke!');
 });
 
 db.connect(process.env.DB_URI, {useNewUrlParser: true}, function(err) {
   if (err) {
+    critialFile.error('Unable to connect to Mongo.', err)
     console.log('Unable to connect to Mongo.')
     process.exit(1)
   } else {
     app.listen(3000, function() {
+      logger.info('Listening on port 3000!')
       console.log('Listening on port 3000!')
     })
   }

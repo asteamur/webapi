@@ -19,8 +19,7 @@ router.get('/:_id', can('tea:memorandum:get'),
         try{
             _id = new ObjectID(req.params._id)
         }catch(err){
-            throw(IdError())
-            //return res.json({error: 'bad _id'})
+            throw(IdError('tea:memorandum:get:' + req.params._id))
         }
         const filters = req.filters 
         query = { _id, ...filters.memorandum }
@@ -49,8 +48,7 @@ router.get('/', querymen.middleware({tea_id: {type: String}}),
         try{
             tea_id = new ObjectID(req.query.tea_id)
         }catch(err){
-            throw(IdError())
-            //return res.json({error: 'bad _id'})
+            throw(IdError('tea:memorandum:get:' + req.query.tea_id))
         }
         let {query, select, cursor} = req.querymen
         query = sanitizeQuery(query)
@@ -95,8 +93,7 @@ router.patch('/:_id', can('tea:memorandum:patch'), validate({body: MemorandumSch
         try{
             _id = new ObjectID(req.params._id)
         }catch(err){
-            throw(IdError())
-            //return res.json({error: 'bad _id'})
+            throw(IdError('tea:memorandum:patch:' + req.params._id))
         }
         const filters = req.filters 
         query = { _id, ...filters.memorandum }
@@ -127,14 +124,12 @@ router.post('/', can('tea:memorandum:post'), validate({body: MemorandumSchema}),
         try{
             _id = new ObjectID(doc.tea_id)
         }catch(err){
-            throw(IdError())
-            //return res.json({error: 'bad _id'})
+            throw(IdError('tea:memorandum:post:' + doc.tea_id))
         }
         doc.tea_id = _id
         const t = await db.get().collection('user').findOne({_id, ...filters.tea})
         if(!t){
             throw(AuthError('no tea'))
-            //res.json({error: 'no tea'})
         }else{
             const r = await db.get().collection('memorandum').insertOne(doc)
             res.json({_id: r.insertedId})

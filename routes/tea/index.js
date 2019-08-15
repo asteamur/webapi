@@ -29,7 +29,7 @@ router.get('/:_id', querymen.middleware(), can('tea:get'),
         try{
             _id = new ObjectID(req.params._id)
         }catch(err){
-            throw(IdError())
+            throw(IdError('tea:get:' + req.params._id))
         }
         const filters = req.filters 
         query = { _id, ...filters.tea, type: 'tea' }
@@ -76,7 +76,7 @@ router.patch('/:_id', can('tea:patch'), validate({body: TeaSchema}),
         try{
             _id = new ObjectID(req.params._id)
         }catch(err){
-            throw(IdError())
+            throw(IdError('tea:patch:' + req.params._id))
         }
         const filters = req.filters 
         query = { _id , ...filters.tea, type: 'tea' }
