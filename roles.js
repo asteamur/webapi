@@ -1,4 +1,7 @@
 module.exports = {
+    'admin': {
+        'tea:post': {}
+    },
     'test.1': {
         'tea:get': {
             tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]}
