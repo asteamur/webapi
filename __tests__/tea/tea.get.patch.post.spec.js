@@ -264,7 +264,7 @@ describe('test tea', () => {
 
         const response = await axios.post(
           'http://localhost:3000/api/private/tea',
-          {name: 'Bernardo'},
+          {name: 'Bernardo', dateOfBirth: '2020-01-03T00:00:00.000Z'},
           {
             headers: {
               Authorization: "Bearer " + token
@@ -274,8 +274,10 @@ describe('test tea', () => {
 
         expect(response.data._id).not.toBeUndefined();
         const doc = await db.collection('user').findOne({ _id: new ObjectID(response.data._id) }, 
-              {projection: {_id: 0, name:1, nameSearch: 1}})  
-        expect(doc).toEqual({name: 'Bernardo', nameSearch: 'bernardo'})    
+              {projection: {_id: 0, name:1, nameSearch: 1, dateOfBirth: 1}})  
+        expect(doc).toEqual({name: 'Bernardo', 
+                             nameSearch: 'bernardo', 
+                             dateOfBirth: new Date(2020, 0, 3)})    
       });
 
       test('not allow post one tea', async () => {

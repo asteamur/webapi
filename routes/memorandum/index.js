@@ -4,13 +4,14 @@ const db = require('../../db')
 const querymen = require('querymen')
 const { can } = require('../../middlewares/can')
 const asyncHandler = require('express-async-handler')
-const { Validator } = require('express-json-validator-middleware')
+//const { Validator } = require('express-json-validator-middleware')
+const validate = require('../../validator')
 const { IdError, AuthError } = require('../../errors')
 const { sanitizeQuery, sanitizeSelect } = require('../../lib')
 const router = Router()
 
-const validator = new Validator({removeAdditional: true, allErrors: true})
-const validate = validator.validate
+//const validator = new Validator({removeAdditional: true, allErrors: true})
+//const validate = validator.validate
 
 
 router.get('/:_id', can('tea:memorandum:get'), 
