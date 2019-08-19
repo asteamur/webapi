@@ -1,6 +1,7 @@
 module.exports = {
     'admin': {
-        'tea:post': {}
+        'tea:post': {},
+        'tea:get': {}
     },
     'test.1': {
         'tea:get': {

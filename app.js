@@ -1,11 +1,14 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const jwt = require('express-jwt')
+//const querymen = require('querymen')
+require('./formatter')
 const memRoutes = require('./routes/memorandum')
 const teaRoutes = require('./routes/tea')
 const authError = require('./middlewares/authError')
 const badIdError = require('./middlewares/bad_idError')
 const tokenError = require('./middlewares/tokenError')
+const queryError = require('./middlewares/queryError')
 //const errorCan = require('./middlewares/errorCan')
 const validationError = require('./middlewares/validationError')
 const db = require('./db')
@@ -32,12 +35,14 @@ app.use(tokenError)
 app.use(validationError)
 app.use(authError)
 app.use(badIdError)
+app.use(queryError)
+//app.use(querymen.errorHandler())
 
 app.use(function(err, req, res, next) {
-  console.error(err.stack);
+  console.error(err.stack)
   logger.error({error: err.stack})
-  res.status(500).send('Something broke!');
-});
+  res.status(500).send('Something broke!')
+})
 
 db.connect(process.env.DB_URI, {useNewUrlParser: true}, function(err) {
   if (err) {
