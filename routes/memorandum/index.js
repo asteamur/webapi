@@ -4,15 +4,19 @@ const db = require('../../db')
 const querymen = require('querymen')
 const { can } = require('../../middlewares/can')
 const asyncHandler = require('express-async-handler')
-//const { Validator } = require('express-json-validator-middleware')
+const { Schema } = require('querymen')
 const validate = require('../../validator')
 const { IdError, AuthError } = require('../../errors')
 const { sanitizeQuery, sanitizeSelect } = require('../../lib')
 const router = Router()
 
-//const validator = new Validator({removeAdditional: true, allErrors: true})
-//const validate = validator.validate
 
+const querySchema = new Schema({
+    tea_id: {type: String},
+    before: {type: Date, paths: ['createdAt'], operator: '$lte'},
+    after: {type: Date, paths: ['createdAt'], operator: '$lte'},
+    since: {type: Date, paths: ['createdAt'], daysAgo: true, operator: '$gte'}
+})
 
 router.get('/:_id', can('tea:memorandum:get'), 
     asyncHandler(async function (req, res) {
@@ -42,7 +46,7 @@ router.get('/:_id', can('tea:memorandum:get'),
         }
     }))
 
-router.get('/', querymen.middleware({tea_id: {type: String}}), 
+router.get('/', querymen.middleware(querySchema), 
     can('tea:memorandum:get'), 
     asyncHandler(async function (req, res) {
         let tea_id = null
@@ -79,9 +83,9 @@ MemorandumSchema = {
         text: {
             type: 'string'
         },
-        author: {
-            type: 'string'
-        },
+        //author: {
+        //    type: 'string'
+        //},
         tea_id: {
             type: 'string'
         }
@@ -111,7 +115,8 @@ router.patch('/:_id', can('tea:memorandum:patch'), validate({body: MemorandumSch
                 throw(AuthError('no tea'))
                 //res.json({error: 'no tea'})
             }else{
-                await db.get().collection('memorandum').updateOne({_id}, {$set: req.body})
+                await db.get().collection('memorandum').updateOne({_id}, 
+                    {$set: {...req.body, updatedAt: new Date(), updatedBy: req.token.userId}})
                 res.json({})   
             }
         }
@@ -122,18 +127,21 @@ router.post('/', can('tea:memorandum:post'), validate({body: MemorandumSchema}),
         let _id = null
         const filters = req.filters 
         const doc = req.body
+
         try{
             _id = new ObjectID(doc.tea_id)
         }catch(err){
             throw(IdError('tea:memorandum:post:' + doc.tea_id))
         }
         doc.tea_id = _id
+        doc.createdBy = req.token.userId
+        doc.createdAt = new Date()
         const t = await db.get().collection('user').findOne({_id, ...filters.tea})
         if(!t){
             throw(AuthError('no tea'))
         }else{
             const r = await db.get().collection('memorandum').insertOne(doc)
-            res.json({_id: r.insertedId})
+            res.json({_id: r.insertedId, createdBy: req.token.userId})
         }
     }))
 

@@ -1,8 +1,10 @@
-const db = require('../db')
-const { ObjectID } = require('mongodb')
+//const db = require('../db')
+//const { ObjectID } = require('mongodb')
 const substitute = require('token-substitute');
 const roles = require('../roles')
+const { AuthError } = require('../errors')
 
+/*
 function makeError(description){
     const error = new Error()
     error.code = 'not-allowed'
@@ -29,16 +31,6 @@ function includes(a, b){
     return true
 }
 
-// POST /api/private/memorandum/:_id
-const demo = {
-    permissions: {
-        'user:memorandum:update': [{
-            tea: { sede: 'A'},
-            memorandum: {author: '$user_id' }
-        }]
-    }
-}
-
 function hasPermission(permissions, objs){
     let valid = false
     for(let p of permissions){
@@ -57,6 +49,7 @@ function hasPermission(permissions, objs){
     }
     return false
 }
+*/
 
 function can(permission){
     return function(req, res, next){
@@ -64,7 +57,7 @@ function can(permission){
         if(permissions){
             let p = permissions[permission]
             if(p === undefined){            
-                return next(makeError('has not got permission'))
+                return next(AuthError('has not got permission'))
             }
             const options = {
                 tokens: {
@@ -85,7 +78,7 @@ function can(permission){
         }
     }
 }
-
+/*
 function _can(permission, resources) {
     return async function(req, res, next){
         const ap = req.token.permissions[permission]
@@ -117,5 +110,6 @@ function _can(permission, resources) {
         }
     }
 }
+*/
 
-module.exports = { can, includes, hasPermission }
+module.exports = { can } //, includes, hasPermission }

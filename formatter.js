@@ -10,7 +10,7 @@ formatter('yearsAgo', (age, value, param) => {
 
 validator('yearsAgo', (age, value, param) => {
     return {
-        valid: !age || /\d+/.test(value),
+        valid: !age || value === undefined || /\d+/.test(value),
         message: 'must be integer'
     }
 })

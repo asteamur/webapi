@@ -1,7 +1,11 @@
 module.exports = {
     'admin': {
         'tea:post': {},
-        'tea:get': {}
+        'tea:get': {},
+        'tea:patch': {},
+        'tea:memorandum:get': {},
+        'tea:memorandum:patch': {},
+        'tea:memorandum:post': {}
     },
     'test.1': {
         'tea:get': {
@@ -9,11 +13,11 @@ module.exports = {
         },
         'tea:memorandum:get': {
             tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]},
-            memorandum: {author: '#{userId}' }
+            memorandum: {createdBy: '#{userId}' }
         },
         'tea:memorandum:patch':{
             tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]},
-            memorandum: {author: '#{userId}' }
+            memorandum: {createdBy: '#{userId}' }
         },
         'tea:patch': {
             tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]}
@@ -25,7 +29,7 @@ module.exports = {
     'test.2': {
         'tea:memorandum:get': {
             tea: {$or: [{sede: {$in: ['B', 'C']}}, {center: 'CEIP 1'}]},
-            memorandum: {author: '#{userId}' }
+            memorandum: {createdBy: '#{userId}' }
         },
         'tea:patch': {
             tea: {$or: [{sede: {$in: ['AA', 'BB']}}, {center: 'CEIP 1'}]}
@@ -34,7 +38,7 @@ module.exports = {
     'test.3': {
         'tea:memorandum:get': {
             tea: {$or: [{sede: {$in: ['A', 'B']}}, {center: 'CEIP 1'}]},
-            memorandum: {author: 'userzzz' }
+            memorandum: {createdBy: 'userzzz' }
         }
     },
     'test.th': {

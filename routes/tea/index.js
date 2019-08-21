@@ -2,15 +2,13 @@ const {Router} = require('express')
 const { ObjectID } = require('mongodb')
 const db = require('../../db')
 const querymen = require('querymen')
-const { Schema, formatter } = require('querymen')
+const { Schema } = require('querymen')
 const { can } = require('../../middlewares/can')
 const asyncHandler = require('express-async-handler')
-//const { Validator } = require('express-json-validator-middleware')
 const validate = require('../../validator')
 const { IdError, AuthError } = require('../../errors')
 const { sanitizeQuery, sanitizeSelect } = require('../../lib')
 const latinize = require('latinize')
-const dayjs = require('dayjs')
 
 const router = Router()
 
@@ -46,7 +44,6 @@ router.get('/', querymen.middleware(querySchema),
     can('tea:get'), 
     asyncHandler(async function (req, res) {
         let {query, select, cursor} = req.querymen
-        console.log('------------->', query, select, cursor)
         query = sanitizeQuery(query)
         select = sanitizeSelect(select)
         const filters = req.filters 
@@ -69,6 +66,9 @@ TeaSchema = {
         dateOfBirth: {
             type: 'string',
             date: true
+        },
+        email: {
+            type: 'string'
         }
     }
 }

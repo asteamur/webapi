@@ -28,14 +28,14 @@ describe('test ', () => {
             _id: memorandum_id,
             tea_id,
             namespace: 'xxx',
-            author: 'userxxx',
+            createdBy: 'userxxx',
             text: ';)'
         })  
         
         await db.collection('memorandum').insertOne({
             tea_id,
             namespace: 'xxx',
-            author: 'useryyy',
+            createdBy: 'useryyy',
             text: ';) !!!'
         })
     })
@@ -75,7 +75,7 @@ describe('test ', () => {
             _id: memorandum_id + '',
             tea_id: tea_id + '',
             namespace: 'xxx',
-            author: 'userxxx',
+            createdBy: 'userxxx',
             text: ';)'
         });  
         //expect(response.status).toEqual(200)
@@ -209,7 +209,7 @@ describe('test ', () => {
  
         expect(response.data).toEqual([{
             _id: memorandum_id + '',
-            author: 'userxxx',
+            createdBy: 'userxxx',
             text: ';)'
         }]);  
         //expect(response.status).toEqual(200)
@@ -329,7 +329,7 @@ describe('test ', () => {
           'http://localhost:3000/api/private/memorandum',
           {
             tea_id: tea_id + '',
-            author: 'userxxx',
+            createdBy: 'userxxx',
             text: 'game over!'},
           {
             headers: {
@@ -338,8 +338,8 @@ describe('test ', () => {
           }
         )
         expect(response.data._id).not.toBeUndefined();
-        const doc = await db.collection('memorandum').findOne({ _id: new ObjectID(response.data._id) }, {projection: {_id: 0, author:1, text: 1}})  
-        expect(doc).toEqual({author: 'userxxx', text: 'game over!'})  
+        const doc = await db.collection('memorandum').findOne({ _id: new ObjectID(response.data._id) }, {projection: {_id: 0, createdBy:1, text: 1}})  
+        expect(doc).toEqual({createdBy: 'userxxx', text: 'game over!'})  
       });  
 
       test('allow post discard additionals', async () => {
@@ -361,7 +361,7 @@ describe('test ', () => {
           'http://localhost:3000/api/private/memorandum',
           {
             tea_id: tea_id + '',
-            author: 'userxxx',
+            createdBy: 'userxxx',
             text: 'game over!',
             add: 'hello'},
           {
