@@ -18,61 +18,28 @@ const querySchema = new Schema({
     since: {type: Date, paths: ['createdAt'], daysAgo: true, operator: '$gte'}
 })
 
-router.get('/:_id', can('tea:memorandum:get'), 
+router.get('/:_id', querymen.middleware(), can('tea:memorandum:get'), 
     asyncHandler(async function (req, res) {
-        let _id = null
-        try{
-            _id = new ObjectID(req.params._id)
-        }catch(err){
-            throw(IdError('tea:memorandum:get:' + req.params._id))
-        }
-        const filters = req.filters 
-        query = { _id, ...filters.memorandum }
-        const select = {_id: 1, text: 1}
-        const doc = await db.get().collection('memorandum').findOne(query, select)
+        const doc = await db.findOne({collection: 'memorandum', _id: req.params._id, select: req.querymen.select, filters: req.filters.memorandum})
         if(doc === null){
             throw(AuthError('no memorandum'))
-            //res.json({error: 'no memorandum'})
-        }else{
-            const tea_id = new ObjectID(doc.tea_id)
-            const t = await db.get().collection('user').findOne({_id: tea_id, ...filters.tea})
-            
-            if(!t){
-                throw(AuthError('no tea'))
-                //res.json({error: 'no tea'})
-            }else{
-                res.json(doc)    
-            }
         }
+        const tea_id = new ObjectID(doc.tea_id)
+        const user = await db.findOne({collection: 'user', _id: tea_id, select: {_id: 1}, filters: req.filters.tea})
+        if(user === null){
+            throw(AuthError('no tea'))
+        }
+        res.json(doc)
     }))
 
 router.get('/', querymen.middleware(querySchema), 
     can('tea:memorandum:get'), 
     asyncHandler(async function (req, res) {
-        let tea_id = null
-        try{
-            tea_id = new ObjectID(req.query.tea_id)
-        }catch(err){
-            throw(IdError('tea:memorandum:get:' + req.query.tea_id))
-        }
+        await db.findOne({collection: 'user', _id: req.query.tea_id, select: {_id: 1}, filters: req.filters.tea})
         let {query, select, cursor} = req.querymen
-        query = sanitizeQuery(query)
-        select = sanitizeSelect(select)
-
-        query.tea_id = tea_id
-        const filters = req.filters 
-        query = {...query, ...filters.memorandum}
-
-        const p1 = db.get().collection('memorandum').find(query, {projection: select}).
-            limit(cursor.limit).skip(cursor.skip).sort(cursor.sort).toArray()    
-        const p2 = db.get().collection('user').findOne({_id: tea_id, ...filters.tea})
-        const values = await Promise.all([p1, p2])
-        if(!values[1]){
-            throw(AuthError('no tea'))
-            //res.json({error: 'no tea'})
-        }else{
-            res.json(values[0])    
-        }
+        query = {...query, tea_id: new ObjectID(req.query.tea_id)}
+        const result = await db.find({collection: 'memorandum', query, select, cursor, filters: req.filters.memorandum})
+        res.json(result)
     }))
 
 MemorandumSchema = {
@@ -94,55 +61,21 @@ MemorandumSchema = {
 
 router.patch('/:_id', can('tea:memorandum:patch'), validate({body: MemorandumSchema}),
     asyncHandler(async function (req, res) {
-        let _id = null
-        try{
-            _id = new ObjectID(req.params._id)
-        }catch(err){
-            throw(IdError('tea:memorandum:patch:' + req.params._id))
-        }
-        const filters = req.filters 
-        query = { _id, ...filters.memorandum }
-        const select = {_id: 1}
-        const doc = await db.get().collection('memorandum').findOne(query, select)
-        if(doc === null){
-            throw(AuthError('no memorandum'))
-            //res.json({error: 'no memorandum'})
-        }else{
-            const tea_id = new ObjectID(doc.tea_id)
-            const t = await db.get().collection('user').findOne({_id: tea_id, ...filters.tea})
-            
-            if(!t){
-                throw(AuthError('no tea'))
-                //res.json({error: 'no tea'})
-            }else{
-                await db.get().collection('memorandum').updateOne({_id}, 
-                    {$set: {...req.body, updatedAt: new Date(), updatedBy: req.token.userId}})
-                res.json({})   
-            }
-        }
+        await db.findOne({collection: 'memorandum', _id: req.params._id, select: {_id: 1}, filters: req.filters.memorandum})
+        const doc = {...req.body, updatedAt: new Date(), updatedBy: req.token.userId}
+        await db.update({collection: 'memorandum', _id: req.params._id, filters: req.filters.memorandum, doc})
+        res.json({})
     }))
 
 router.post('/', can('tea:memorandum:post'), validate({body: MemorandumSchema}),
     asyncHandler(async function (req, res) {
-        let _id = null
-        const filters = req.filters 
-        const doc = req.body
-
-        try{
-            _id = new ObjectID(doc.tea_id)
-        }catch(err){
-            throw(IdError('tea:memorandum:post:' + doc.tea_id))
-        }
-        doc.tea_id = _id
+        const doc = req.body        
+        await db.findOne({collection: 'user', _id: doc.tea_id, select: {_id: 1}, filters: req.filters.tea})
+        doc.tea_id = new ObjectID(doc.tea_id)
         doc.createdBy = req.token.userId
         doc.createdAt = new Date()
-        const t = await db.get().collection('user').findOne({_id, ...filters.tea})
-        if(!t){
-            throw(AuthError('no tea'))
-        }else{
-            const r = await db.get().collection('memorandum').insertOne(doc)
-            res.json({_id: r.insertedId, createdBy: req.token.userId})
-        }
+        const r = await db.get().collection('memorandum').insertOne(doc)
+        res.json({_id: r.insertedId, createdBy: req.token.userId})
     }))
 
 module.exports = router;

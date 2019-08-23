@@ -15,6 +15,7 @@ const router = Router()
 const querySchema = new Schema({
     sede: {type: [String]}, 
     center: {type: [String]},
+    type: {type: String},
     before: {type: Date, yearsAgo: true, paths: ['dateOfBirth'], operator: '$lte'},
     after: {type: Date, yearsAgo: true, paths: ['dateOfBirth'], operator: '$gte'},
     name: { type: RegExp, paths: ['nameSearch'] }
@@ -22,36 +23,15 @@ const querySchema = new Schema({
 
 router.get('/:_id', querymen.middleware(), can('tea:get'), 
     asyncHandler(async function (req, res) {
-        let { select } = req.querymen
-        select = sanitizeSelect(select)
-        let _id = null
-        try{
-            _id = new ObjectID(req.params._id)
-        }catch(err){
-            throw(IdError('tea:get:' + req.params._id))
-        }
-        const filters = req.filters 
-        query = { _id, ...filters.tea, type: 'tea' }
-        const doc = await db.get().collection('user').findOne(query, {projection: select})
-        if(doc === null){
-            throw(AuthError('no tea'))
-        }else{
-            res.json(doc)    
-        }
+        const doc = await db.findOne({collection: 'user', _id: req.params._id, select: req.querymen.select, filters: req.filters.tea})
+        res.json(doc)
     }))
 
 router.get('/', querymen.middleware(querySchema), 
     can('tea:get'), 
     asyncHandler(async function (req, res) {
-        let {query, select, cursor} = req.querymen
-        query = sanitizeQuery(query)
-        select = sanitizeSelect(select)
-        const filters = req.filters 
-        query = {...query, ...filters.tea, type: 'tea'}
-
-        const teas = await db.get().collection('user').find(query, {projection: select}).
-            limit(cursor.limit).skip(cursor.skip).sort(cursor.sort).toArray()    
-        res.json(teas)
+        const result = await db.find({collection: 'user', ...req.querymen, filters: req.filters.tea})
+        res.json(result)
     }))
 
 
@@ -75,23 +55,9 @@ TeaSchema = {
 
 router.patch('/:_id', can('tea:patch'), validate({body: TeaSchema}),
     asyncHandler(async function (req, res) {
-        let _id = null
-        try{
-            _id = new ObjectID(req.params._id)
-        }catch(err){
-            throw(IdError('tea:patch:' + req.params._id))
-        }
-        const filters = req.filters 
-        query = { _id , ...filters.tea, type: 'tea' }
-        
-        const t = await db.get().collection('user').findOne(query)    
-        if(!t){
-            throw(AuthError('no tea'))
-        }else{
-            const doc = {...req.body, nameSearch: latinize(req.body.name).toLowerCase()}
-            await db.get().collection('user').updateOne({_id}, {$set: doc})
-            res.json({})   
-        }
+        const doc = {...req.body, nameSearch: latinize(req.body.name).toLowerCase()}
+        await db.update({collection: 'user', _id: req.params._id, filters: req.filters.tea, doc})
+        res.json({})
     }))
 
 router.post('/', can('tea:post'), validate({body: TeaSchema}),

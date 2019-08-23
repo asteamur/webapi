@@ -116,7 +116,7 @@ describe('test tea', () => {
         token = jwt.sign(token, 'secret')
 
         const response = await axios.get(
-          'http://localhost:3000/api/private/tea/?center=CC&fields=sede,center,password',
+          'http://localhost:3000/api/private/tea/?type=tea&center=CC&fields=sede,center,password',
           {
             headers: {
               Authorization: "Bearer " + token
@@ -247,6 +247,7 @@ describe('test tea', () => {
                 }
             }
             )
+            console.log('response:', response.data)
         }catch(err){
             expect(err.response.status).toEqual(401)
         }
