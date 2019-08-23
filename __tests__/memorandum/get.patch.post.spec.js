@@ -199,20 +199,20 @@ describe('test ', () => {
         token = jwt.sign(token, 'secret')
 
         const response = await axios.get(
-          'http://localhost:3000/api/private/memorandum/?tea_id=' + tea_id + '&fields=text,author',
+          'http://localhost:3000/api/private/memorandum/?tea_id=' + tea_id + '&fields=text,createdBy',
           {
             headers: {
               Authorization: "Bearer " + token
             }
           }
         )
- 
+        
         expect(response.data).toEqual([{
             _id: memorandum_id + '',
             createdBy: 'userxxx',
             text: ';)'
-        }]);  
-        //expect(response.status).toEqual(200)
+        }]);
+          
       });
 
       test('fail tea sede', async () => {
@@ -329,7 +329,6 @@ describe('test ', () => {
           'http://localhost:3000/api/private/memorandum',
           {
             tea_id: tea_id + '',
-            createdBy: 'userxxx',
             text: 'game over!'},
           {
             headers: {
@@ -339,7 +338,7 @@ describe('test ', () => {
         )
         expect(response.data._id).not.toBeUndefined();
         const doc = await db.collection('memorandum').findOne({ _id: new ObjectID(response.data._id) }, {projection: {_id: 0, createdBy:1, text: 1}})  
-        expect(doc).toEqual({createdBy: 'userxxx', text: 'game over!'})  
+        expect(doc).toEqual({createdBy: 'th1', text: 'game over!'})  
       });  
 
       test('allow post discard additionals', async () => {

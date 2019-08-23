@@ -25,7 +25,7 @@ formatter('daysAgo', (age, value, param) => {
 
 validator('daysAgo', (age, value, param) => {
     return {
-        valid: !age || /\d+/.test(value),
+        valid: !age || value === undefined || /\d+/.test(value),
         message: 'must be integer'
     }
 })
